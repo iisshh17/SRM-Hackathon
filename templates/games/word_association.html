@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <h1><i class="fas fa-brain me-2"></i>Word Association</h1>
+        <p class="lead">Match words with their closest association</p>
+    </div>
+    
+    <div class="game-controls">
+        <button onclick="startNewGame()" class="btn btn-primary">
+            <i class="fas fa-sync-alt me-2"></i>New Game
+        </button>
+        <div class="game-stats">
+            <span class="score">Score: <span id="score">0</span></span>
+            <span class="timer">Time: <span id="timeLeft">60</span>s</span>
+        </div>
+    </div>
+
+    <div class="word-container">
+        <div class="target-word" id="targetWord"></div>
+        <div class="options-grid" id="optionsGrid"></div>
+    </div>
+
+    <div id="message" class="game-message"></div>
+</div>
+
+<style>
+.game-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.word-container {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.target-word {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4a90e2;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.option-button {
+    padding: 1rem;
+    font-size: 1.2rem;
+    border: 2px solid #4a90e2;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.option-button:hover {
+    background: #f0f7ff;
+    transform: translateY(-2px);
+}
+
+.success { color: #28a745; }
+.error { color: #dc3545; }
+
+@media (max-width: 600px) {
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+const wordPairs = [
+    { word: "Sky", options: ["Cloud", "Fish", "Car", "Book"], correct: "Cloud" },
+    { word: "Tree", options: ["Leaf", "Phone", "Chair", "Shoe"], correct: "Leaf" },
+    { word: "Ocean", options: ["Mountain", "Wave", "Desert", "Forest"], correct: "Wave" },
+    { word: "Fire", options: ["Ice", "Heat", "Wind", "Stone"], correct: "Heat" },
+    { word: "Bird", options: ["Wing", "Tail", "Fin", "Hoof"], correct: "Wing" },
+    { word: "Computer", options: ["Screen", "Garden", "Cloud", "Tree"], correct: "Screen" },
+    { word: "Book", options: ["Page", "Car", "Sun", "Rain"], correct: "Page" },
+    { word: "Sun", options: ["Moon", "Fork", "Desk", "Door"], correct: "Moon" },
+    { word: "House", options: ["Road", "Door", "Cloud", "Wave"], correct: "Door" },
+    { word: "Dog", options: ["Cat", "Sky", "Desk", "Wall"], correct: "Cat" }
+];
+
+let currentPair;
+let score = 0;
+let timeLeft = 60;
+let timer = null;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function generateQuestion() {
+    currentPair = wordPairs[Math.floor(Math.random() * wordPairs.length)];
+    document.getElementById('targetWord').textContent = currentPair.word;
+    
+    const optionsGrid = document.getElementById('optionsGrid');
+    optionsGrid.innerHTML = '';
+    
+    shuffleArray([...currentPair.options]).forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'option-button';
+        button.textContent = option;
+        button.onclick = () => checkAnswer(option);
+        optionsGrid.appendChild(button);
+    });
+}
+
+function checkAnswer(selected) {
+    const message = document.getElementById('message');
+    
+    if (selected === currentPair.correct) {
+        score += 10;
+        document.getElementById('score').textContent = score;
+        message.textContent = 'Correct! +10 points';
+        message.className = 'game-message success';
+        setTimeout(() => {
+            message.textContent = '';
+            generateQuestion();
+        }, 1000);
+    } else {
+        message.textContent = 'Try again!';
+        message.className = 'game-message error';
+    }
+}
+
+function updateTimer() {
+    timeLeft--;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        alert(`Game Over!\nFinal Score: ${score}`);
+        startNewGame();
+    }
+}
+
+function startNewGame() {
+    score = 0;
+    timeLeft = 60;
+    document.getElementById('score').textContent = score;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    document.getElementById('message').textContent = '';
+    
+    if (timer) clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+    
+    generateQuestion();
+}
+
+// Start game when page loads
+document.addEventListener('DOMContentLoaded', startNewGame);
+</script>
+{% endblock %} 

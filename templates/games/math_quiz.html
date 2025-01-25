@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <h1><i class="fas fa-calculator me-2"></i>Math Quiz</h1>
+        <p class="lead">Test your mental math skills</p>
+    </div>
+    
+    <div class="game-controls">
+        <button onclick="startNewGame()" class="btn btn-primary">
+            <i class="fas fa-sync-alt me-2"></i>New Game
+        </button>
+        <div class="difficulty-selector">
+            <label>Difficulty:</label>
+            <select id="difficulty" class="form-select" onchange="startNewGame()">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        <div class="game-stats">
+            <span class="score">Score: <span id="score">0</span></span>
+            <span class="timer">Time: <span id="timeLeft">30</span>s</span>
+        </div>
+    </div>
+
+    <div class="quiz-container">
+        <div id="question" class="math-question"></div>
+        <input type="number" id="userAnswer" class="answer-input" placeholder="Enter your answer">
+        <button onclick="checkAnswer()" class="btn btn-success check-btn">
+            <i class="fas fa-check me-2"></i>Submit
+        </button>
+    </div>
+
+    <div id="message" class="game-message"></div>
+    <div id="stats" class="stats-container">
+        <div class="correct-answers">Correct: <span id="correct">0</span></div>
+        <div class="wrong-answers">Wrong: <span id="wrong">0</span></div>
+    </div>
+</div>
+
+<style>
+.game-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.difficulty-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.difficulty-selector select {
+    width: 120px;
+}
+
+.game-stats {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.2rem;
+}
+
+.quiz-container {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.math-question {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #4a90e2;
+    margin-bottom: 1.5rem;
+}
+
+.answer-input {
+    padding: 1rem;
+    font-size: 1.2rem;
+    border: 2px solid #4a90e2;
+    border-radius: 8px;
+    width: 200px;
+    margin-right: 1rem;
+    text-align: center;
+}
+
+.check-btn {
+    padding: 1rem 2rem;
+}
+
+.game-message {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: bold;
+    min-height: 24px;
+}
+
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 2rem;
+    font-size: 1.2rem;
+}
+
+.success { color: #28a745; }
+.error { color: #dc3545; }
+
+@media (max-width: 600px) {
+    .game-controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .math-question {
+        font-size: 2rem;
+    }
+    
+    .answer-input {
+        width: 150px;
+    }
+}
+</style>
+
+<script>
+let currentAnswer = 0;
+let score = 0;
+let timeLeft = 30;
+let timer = null;
+let correctAnswers = 0;
+let wrongAnswers = 0;
+
+function generateQuestion() {
+    const difficulty = document.getElementById('difficulty').value;
+    let num1, num2, operator;
+    
+    switch(difficulty) {
+        case 'easy':
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            operator = ['+', '-'][Math.floor(Math.random() * 2)];
+            break;
+        case 'medium':
+            num1 = Math.floor(Math.random() * 50) + 1;
+            num2 = Math.floor(Math.random() * 50) + 1;
+            operator = ['+', '-', '*'][Math.floor(Math.random() * 3)];
+            break;
+        case 'hard':
+            num1 = Math.floor(Math.random() * 100) + 1;
+            num2 = Math.floor(Math.random() * 100) + 1;
+            operator = ['+', '-', '*', '/'][Math.floor(Math.random() * 4)];
+            if (operator === '/') {
+                // Ensure clean division
+                num1 = num2 * (Math.floor(Math.random() * 10) + 1);
+            }
+            break;
+    }
+    
+    const question = `${num1} ${operator} ${num2}`;
+    document.getElementById('question').textContent = question;
+    
+    switch(operator) {
+        case '+': currentAnswer = num1 + num2; break;
+        case '-': currentAnswer = num1 - num2; break;
+        case '*': currentAnswer = num1 * num2; break;
+        case '/': currentAnswer = num1 / num2; break;
+    }
+}
+
+function checkAnswer() {
+    const userAnswer = parseFloat(document.getElementById('userAnswer').value);
+    const message = document.getElementById('message');
+    
+    if (userAnswer === currentAnswer) {
+        score += 10;
+        correctAnswers++;
+        document.getElementById('score').textContent = score;
+        document.getElementById('correct').textContent = correctAnswers;
+        message.textContent = 'Correct! +10 points';
+        message.className = 'game-message success';
+        setTimeout(() => {
+            message.textContent = '';
+            document.getElementById('userAnswer').value = '';
+            generateQuestion();
+        }, 1000);
+    } else {
+        wrongAnswers++;
+        document.getElementById('wrong').textContent = wrongAnswers;
+        message.textContent = `Wrong! The correct answer was ${currentAnswer}`;
+        message.className = 'game-message error';
+    }
+}
+
+function updateTimer() {
+    timeLeft--;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        alert(`Game Over!\nScore: ${score}\nCorrect Answers: ${correctAnswers}\nWrong Answers: ${wrongAnswers}`);
+        startNewGame();
+    }
+}
+
+function startNewGame() {
+    score = 0;
+    timeLeft = 30;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    document.getElementById('score').textContent = score;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    document.getElementById('correct').textContent = correctAnswers;
+    document.getElementById('wrong').textContent = wrongAnswers;
+    document.getElementById('message').textContent = '';
+    document.getElementById('userAnswer').value = '';
+    
+    if (timer) clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+    
+    generateQuestion();
+}
+
+document.getElementById('userAnswer').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        checkAnswer();
+    }
+});
+
+// Start game
+document.addEventListener('DOMContentLoaded', startNewGame);
+</script>
+{% endblock %} 

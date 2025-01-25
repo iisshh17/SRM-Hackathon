@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarity Hub | Advanced Learning Platform</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        /* Modern Learning Platform Styles */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #0ea5e9;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --background-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+        }
+        
+        body {
+            background-color: var(--background-light);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+        }
+        
+        /* Premium Navigation Styling */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-dark) !important;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .nav-link.premium {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white !important;
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem !important;
+        }
+        
+        .nav-link.premium:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+        
+        /* Content Styling */
+        .hero-section {
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            padding: 6rem 0;
+            margin-bottom: 4rem;
+            color: white;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Chat Interface Styling */
+        .chat-container {
+            max-width: 100%;
+            margin: 1rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .chat-box {
+            height: calc(100vh - 400px);
+            min-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: var(--background-light);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .message {
+            max-width: 100%;
+            word-wrap: break-word;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .message-content {
+            overflow-x: auto;
+            max-width: 100%;
+            white-space: pre-wrap;
+        }
+        
+        .user-message {
+            background: white;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .assistant-message {
+            background: white;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .message-header {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Form Controls */
+        .form-control {
+            border: 2px solid #e2e8f0;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border: none;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.2);
+        }
+        
+        /* Footer */
+        footer {
+            background: white;
+            padding: 4rem 0;
+            margin-top: 6rem;
+        }
+        
+        .footer-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        
+        .footer-link {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Enhanced Response Styling */
+        .response-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .response-section h2 {
+            font-size: 1.25rem;
+            margin: 1rem 0;
+        }
+        
+        .response-section ul, 
+        .response-section ol {
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        
+        .response-section li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+        
+        .practice-exercise {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .summary-section {
+            background: #f0f9ff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        .further-learning {
+            background: #f0fdf4;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #22c55e;
+        }
+        
+        .visual-aid {
+            background: #fdf4ff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #d946ef;
+        }
+        
+        .code-example {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        
+        /* Learning Style Indicators */
+        .learning-style {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        .style-visual {
+            background: #f0fdf4;
+            color: #166534;
+        }
+        
+        .style-auditory {
+            background: #f0f9ff;
+            color: #075985;
+        }
+        
+        .style-kinesthetic {
+            background: #fdf4ff;
+            color: #86198f;
+        }
+
+        /* Response Container Styling */
+        .response-container {
+            width: 100%;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .response-header {
+            padding: 1rem;
+        }
+
+        .response-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .similarity-score {
+            font-weight: 500;
+        }
+
+        .response-type {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .learning-profile {
+            background: var(--background-light);
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .learning-profile h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .learning-profile ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .learning-profile li {
+            display: inline-block;
+            margin-right: 20px;
+            color: var(--text-light);
+        }
+
+        .main-response {
+            padding: 20px;
+        }
+
+        /* Section Styling */
+        .main-response h2 {
+            color: var(--primary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .main-response ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .main-response li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        /* Emoji Icons */
+        .emoji-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+        }
+
+        /* Section-specific styling */
+        .learning-guide {
+            border-left: 4px solid #4f46e5;
+            padding-left: 15px;
+        }
+
+        .key-concepts {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .examples {
+            border-left: 4px solid #06b6d4;
+            padding-left: 15px;
+        }
+
+        .practice-exercise {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .summary {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .further-learning {
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 15px;
+        }
+
+        /* Learning Interface */
+        .learning-interface {
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        /* Sidebar Navigation */
+        .learning-sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .topic-nav {
+            list-style: none;
+            padding: 0;
+        }
+
+        .topic-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .topic-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .topic-nav a:hover {
+            background: var(--background-light);
+            color: var(--primary-color);
+        }
+
+        .topic-nav .active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Learning Content Sections */
+        .content-section {
+            padding: 1rem;
+            overflow-x: hidden;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .concept-card {
+            background: var(--background-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .example-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Interactive Elements */
+        .practice-section {
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .quiz-question {
+            margin-bottom: 1.5rem;
+        }
+
+        .answer-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .answer-option:hover {
+            border-color: var(--primary-color);
+            background: #f8fafc;
+        }
+
+        /* Progress Indicators */
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transition: width 0.3s ease;
+        }
+
+        /* Learning Resources */
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: auto;
+            min-height: 100px;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .learning-interface {
+                grid-template-columns: 1fr;
+            }
+
+            .learning-sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+
+            .chat-container {
+                padding: 0.5rem;
+            }
+
+            .response-meta {
+                font-size: 0.8rem;
+            }
+
+            .response-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .message {
+                padding: 0.75rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .resource-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">Clarity Hub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chat_2">AI Tutor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/voice">Voice Learning</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="artTherapyDropdown" role="button" data-bs-toggle="dropdown">
+                            Art Therapy
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('art_ironman') }}">
+                                <i class="fas fa-mask"></i> Ironman
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('art_shapes') }}">
+                                <i class="fas fa-shapes"></i> Shapes
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('art_flowers') }}">
+                                <i class="fas fa-flower"></i> Flowers
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('art_heroes') }}">
+                                <i class="fas fa-mask"></i> Heroes
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="gamesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-gamepad me-2"></i>Brain Games
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="gamesDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('sudoku_game') }}">Sudoku</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('memory_game') }}">Memory Cards</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('word_scramble') }}">Word Scramble</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('math_quiz') }}">Math Quiz</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('pattern_match') }}">Pattern Matching</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('speed_typing') }}">Speed Typing</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('color_memory') }}">Color Memory</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('number_sequence') }}">Number Sequence</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('word_association') }}">Word Association</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link premium" href="/signin">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-title">Clarity Hub</h5>
+                    <p class="text-muted">Transforming education through advanced AI technology. Learn smarter, not harder.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">Features</a></li>
+                        <li><a href="#" class="footer-link">Pricing</a></li>
+                        <li><a href="#" class="footer-link">Enterprise</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">About Us</a></li>
+                        <li><a href="#" class="footer-link">Careers</a></li>
+                        <li><a href="#" class="footer-link">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Support</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">Help Center</a></li>
+                        <li><a href="#" class="footer-link">Contact</a></li>
+                        <li><a href="#" class="footer-link">Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Connect</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="footer-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="footer-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="footer-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center text-muted">
+                <small>© 2024 Clarity Hub. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

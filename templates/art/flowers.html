@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flower Coloring</title>
+    <link rel="stylesheet" href="/static/art/flowers.css" />
+  </head>
+  <body>
+    <h1>Flower Coloring</h1>
+    <div id="flower-container">
+      <h2>Rose</h2>
+      <svg id="rose" width="200" height="300">
+        <circle id="petals" cx="100" cy="100" r="50" fill="pink" />
+        <rect id="stem" x="90" y="150" width="20" height="100" fill="green" />
+        <ellipse
+          id="leaf"
+          cx="100"
+          cy="200"
+          rx="30"
+          ry="10"
+          fill="lightgreen"
+        />
+      </svg>
+
+      <h2>Sunflower</h2>
+      <svg id="sunflower" width="200" height="300">
+        <circle id="petals" cx="100" cy="100" r="50" fill="yellow" />
+        <circle id="center" cx="100" cy="100" r="30" fill="brown" />
+        <rect id="stem" x="90" y="150" width="20" height="100" fill="green" />
+      </svg>
+
+      <h2>Tulip</h2>
+      <svg id="tulip" width="200" height="300">
+        <path id="flower" d="M50,150 Q100,50 150,150 Z" fill="red" />
+        <rect id="stem" x="90" y="150" width="20" height="100" fill="green" />
+        <ellipse
+          id="leaf"
+          cx="100"
+          cy="200"
+          rx="30"
+          ry="10"
+          fill="lightgreen"
+        />
+      </svg>
+    </div>
+
+    <h2>Color Palette</h2>
+    <div id="color-palette">
+      <input type="color" id="color-picker" />
+      <button onclick="applyColor()">Apply Color</button>
+    </div>
+
+    <button id="close">X</button>
+    <script src="/static/art/flowers.js"></script>
+  </body>
+</html>

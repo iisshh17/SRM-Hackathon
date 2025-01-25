@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <h1><i class="fas fa-puzzle-piece me-2"></i>Sudoku Challenge</h1>
+        <p class="lead">Exercise your logical thinking with Sudoku</p>
+    </div>
+    
+    <div class="game-controls">
+        <button onclick="loadSudoku()" class="btn btn-primary">
+            <i class="fas fa-sync-alt me-2"></i>New Game
+        </button>
+        <button onclick="checkSolution()" class="btn btn-success">
+            <i class="fas fa-check me-2"></i>Check Solution
+        </button>
+        <select id="difficulty" class="form-select" onchange="loadSudoku()">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+    </div>
+
+    <div class="sudoku-board">
+        <div class="wrapper" id="wrapper"></div>
+    </div>
+
+    <div id="message" class="game-message"></div>
+</div>
+
+<style>
+.game-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.game-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+.game-controls .form-select {
+    width: auto;
+}
+
+.sudoku-board {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(9, 50px);
+    grid-gap: 1px;
+    background: #ccc;
+    padding: 1px;
+    border: 2px solid #333;
+}
+
+.stell {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.stell:nth-child(3n) {
+    border-right: 2px solid #333;
+}
+
+.wrapper > div:nth-child(27n) {
+    border-bottom: 2px solid #333;
+}
+
+.stell[readonly] {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.game-message {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: bold;
+    min-height: 24px;
+}
+
+.success {
+    color: #28a745;
+}
+
+.error {
+    color: #dc3545;
+}
+
+@media (max-width: 600px) {
+    .wrapper {
+        grid-template-columns: repeat(9, 35px);
+    }
+    
+    .stell {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+    
+    .game-controls {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+let solution = null;
+
+function generateSudoku() {
+    // Basic Sudoku generation algorithm
+    const grid = Array(9).fill().map(() => Array(9).fill(0));
+    
+    // Fill diagonal boxes
+    for (let i = 0; i < 9; i += 3) {
+        fillBox(grid, i, i);
+    }
+    
+    // Solve the rest
+    solveSudoku(grid);
+    
+    return grid;
+}
+
+function fillBox(grid, row, col) {
+    const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            const randomIndex = Math.floor(Math.random() * nums.length);
+            grid[row + i][col + j] = nums[randomIndex];
+            nums.splice(randomIndex, 1);
+        }
+    }
+}
+
+function solveSudoku(grid) {
+    const empty = findEmpty(grid);
+    if (!empty) return true;
+    
+    const [row, col] = empty;
+    for (let num = 1; num <= 9; num++) {
+        if (isValid(grid, num, row, col)) {
+            grid[row][col] = num;
+            if (solveSudoku(grid)) return true;
+            grid[row][col] = 0;
+        }
+    }
+    return false;
+}
+
+function findEmpty(grid) {
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            if (grid[i][j] === 0) return [i, j];
+        }
+    }
+    return null;
+}
+
+function isValid(grid, num, row, col) {
+    // Check row
+    for (let j = 0; j < 9; j++) {
+        if (grid[row][j] === num) return false;
+    }
+    
+    // Check column
+    for (let i = 0; i < 9; i++) {
+        if (grid[i][col] === num) return false;
+    }
+    
+    // Check box
+    const boxRow = Math.floor(row / 3) * 3;
+    const boxCol = Math.floor(col / 3) * 3;
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (grid[boxRow + i][boxCol + j] === num) return false;
+        }
+    }
+    
+    return true;
+}
+
+function loadSudoku() {
+    const wrapper = document.getElementById('wrapper');
+    wrapper.innerHTML = '';
+    
+    const grid = generateSudoku();
+    solution = grid.map(row => [...row]);
+    
+    const difficulty = document.getElementById('difficulty').value;
+    const cellsToRemove = {
+        easy: 30,
+        medium: 40,
+        hard: 50
+    }[difficulty];
+    
+    // Remove numbers based on difficulty
+    for (let i = 0; i < cellsToRemove; i++) {
+        const row = Math.floor(Math.random() * 9);
+        const col = Math.floor(Math.random() * 9);
+        grid[row][col] = 0;
+    }
+    
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'stell';
+            input.min = 1;
+            input.max = 9;
+            if (grid[i][j] !== 0) {
+                input.value = grid[i][j];
+                input.readOnly = true;
+            }
+            wrapper.appendChild(input);
+        }
+    }
+    
+    document.getElementById('message').textContent = '';
+}
+
+function checkSolution() {
+    const inputs = document.querySelectorAll('.stell');
+    const currentGrid = [];
+    let row = [];
+    
+    inputs.forEach((input, index) => {
+        row.push(parseInt(input.value) || 0);
+        if (row.length === 9) {
+            currentGrid.push(row);
+            row = [];
+        }
+    });
+    
+    const message = document.getElementById('message');
+    let isCorrect = true;
+    
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            if (currentGrid[i][j] !== solution[i][j]) {
+                isCorrect = false;
+                break;
+            }
+        }
+    }
+    
+    if (isCorrect) {
+        message.textContent = 'Congratulations! You solved the puzzle!';
+        message.className = 'game-message success';
+    } else {
+        message.textContent = 'Not quite right. Keep trying!';
+        message.className = 'game-message error';
+    }
+}
+
+// Initialize game on load
+document.addEventListener('DOMContentLoaded', loadSudoku);
+</script>
+{% endblock %} 

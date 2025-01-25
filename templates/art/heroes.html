@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superhero Coloring</title>
+  <link rel="stylesheet" href="/static/art/heroes.css">
+</head>
+<body>
+  <h1>Superhero Coloring</h1>
+  <div id="superhero-container">
+    <h2>Superman</h2>
+    <svg id="superman" width="200" height="300">
+      <rect id="body" x="50" y="50" width="100" height="200" fill="blue" />
+      <path id="cape" d="M50,50 L100,0 L150,50 Z" fill="red" />
+      <rect id="logo" x="80" y="100" width="40" height="40" fill="yellow" />
+      <rect id="boots" x="60" y="240" width="80" height="20" fill="red" />
+    </svg>
+
+    <h2>Hulk</h2>
+    <svg id="hulk" width="200" height="300">
+      <circle id="head" cx="100" cy="50" r="50" fill="green" />
+      <rect id="torso" x="50" y="100" width="100" height="100" fill="green" />
+      <rect id="pants" x="50" y="200" width="100" height="50" fill="purple" />
+      <rect id="feet" x="60" y="250" width="80" height="20" fill="brown" />
+    </svg>
+
+    <h2>Batman</h2>
+    <svg id="batman" width="200" height="300">
+      <path id="mask" d="M50,50 L100,0 L150,50 Z" fill="black" />
+      <rect id="suit" x="50" y="100" width="100" height="150" fill="gray" />
+      <circle id="bat-logo" cx="100" cy="150" r="20" fill="yellow" />
+      <rect id="bat-boots" x="60" y="240" width="80" height="20" fill="black" />
+    </svg>
+  </div>
+
+  <h2>Color Palette</h2>
+  <div id="color-palette">
+    <input type="color" id="color-picker" />
+    <button onclick="applyColor()">Apply Color</button>
+  </div>
+  <button id="close">X</button>
+
+  <script src="/static/art/heroes.js"></script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <h1><i class="fas fa-sort-numeric-up me-2"></i>Number Sequence</h1>
+        <p class="lead">Find the pattern and complete the sequence</p>
+    </div>
+    
+    <div class="game-controls">
+        <button onclick="startNewGame()" class="btn btn-primary">
+            <i class="fas fa-sync-alt me-2"></i>New Game
+        </button>
+        <div class="game-stats">
+            <span class="level">Level: <span id="level">1</span></span>
+            <span class="score">Score: <span id="score">0</span></span>
+            <span class="timer">Time: <span id="timeLeft">30</span>s</span>
+        </div>
+    </div>
+
+    <div class="sequence-container">
+        <div class="sequence-display" id="sequenceDisplay"></div>
+        <div class="answer-section">
+            <input type="number" id="userAnswer" class="answer-input" placeholder="Next number?">
+            <button onclick="checkAnswer()" class="btn btn-success">
+                <i class="fas fa-check me-2"></i>Submit
+            </button>
+        </div>
+    </div>
+
+    <div id="message" class="game-message"></div>
+    <div id="hint" class="hint-text"></div>
+</div>
+
+<style>
+.game-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sequence-container {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.sequence-display {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4a90e2;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    letter-spacing: 5px;
+}
+
+.answer-section {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.answer-input {
+    width: 150px;
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    text-align: center;
+    border: 2px solid #4a90e2;
+    border-radius: 8px;
+}
+
+.hint-text {
+    margin-top: 1rem;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+}
+
+.success { color: #28a745; }
+.error { color: #dc3545; }
+
+@media (max-width: 600px) {
+    .game-controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .sequence-display {
+        font-size: 1.5rem;
+    }
+}
+</style>
+
+<script>
+const patterns = [
+    {
+        generate: (n) => n * 2,
+        hint: "Each number is doubled"
+    },
+    {
+        generate: (n) => n * n,
+        hint: "Square numbers"
+    },
+    {
+        generate: (n) => n * 3 + 1,
+        hint: "Multiply by 3 and add 1"
+    },
+    {
+        generate: (n) => Math.pow(2, n),
+        hint: "Powers of 2"
+    },
+    {
+        generate: (n) => n * (n + 1) / 2,
+        hint: "Triangular numbers"
+    }
+];
+
+let currentPattern;
+let sequence = [];
+let level = 1;
+let score = 0;
+let timeLeft = 30;
+let timer = null;
+
+function generateSequence() {
+    const patternIndex = Math.floor(Math.random() * patterns.length);
+    currentPattern = patterns[patternIndex];
+    sequence = [];
+    
+    for (let i = 1; i <= 4 + level; i++) {
+        sequence.push(currentPattern.generate(i));
+    }
+    
+    document.getElementById('sequenceDisplay').textContent = 
+        sequence.slice(0, -1).join(', ') + ', ?';
+    document.getElementById('hint').textContent = 
+        `Hint: ${currentPattern.hint}`;
+}
+
+function checkAnswer() {
+    const userAnswer = parseInt(document.getElementById('userAnswer').value);
+    const correctAnswer = sequence[sequence.length - 1];
+    const message = document.getElementById('message');
+    
+    if (userAnswer === correctAnswer) {
+        score += level * 10;
+        level++;
+        document.getElementById('score').textContent = score;
+        document.getElementById('level').textContent = level;
+        message.textContent = 'Correct! Next sequence...';
+        message.className = 'game-message success';
+        document.getElementById('userAnswer').value = '';
+        generateSequence();
+    } else {
+        message.textContent = 'Try again!';
+        message.className = 'game-message error';
+    }
+}
+
+function updateTimer() {
+    timeLeft--;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        alert(`Game Over!\nFinal Score: ${score}\nLevel Reached: ${level}`);
+        startNewGame();
+    }
+}
+
+function startNewGame() {
+    level = 1;
+    score = 0;
+    timeLeft = 30;
+    document.getElementById('score').textContent = score;
+    document.getElementById('level').textContent = level;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    document.getElementById('message').textContent = '';
+    document.getElementById('userAnswer').value = '';
+    
+    if (timer) clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+    
+    generateSequence();
+}
+
+document.getElementById('userAnswer').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        checkAnswer();
+    }
+});
+
+// Start game when page loads
+document.addEventListener('DOMContentLoaded', startNewGame);
+</script>
+{% endblock %} 

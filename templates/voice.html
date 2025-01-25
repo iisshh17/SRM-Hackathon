@@ -1,0 +1,833 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="voice-interface">
+    <!-- Header Section -->
+    <div class="header-section">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/brain-logo.png') }}" alt="Brain Logo" class="brain-logo">
+            <h1>Virtual Doubtsolver Speech to Speech</h1>
+        </div>
+        
+        <nav class="main-nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/chat">Chat</a>
+            <a href="/voice" class="active">Speech</a>
+        </nav>
+    </div>
+
+    <!-- Main Interactive Section -->
+    <div class="interactive-container">
+        <!-- Talking Tutor Section -->
+        <div class="talking-tutor">
+            <div class="tutor-animation">
+                <div class="avatar-container">
+                    <div class="avatar-circle">
+                        <div class="avatar-face">
+                            <div class="avatar-eyes">
+                                <div class="eye left"></div>
+                                <div class="eye right"></div>
+                            </div>
+                            <div class="avatar-mouth"></div>
+                        </div>
+                        <div class="avatar-body">
+                            <div class="tie"></div>
+                            <div class="book-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voice Controls Integrated with Tutor -->
+            <div class="voice-interaction">
+                <div class="voice-status">
+                    <div class="status-dot"></div>
+                    <span id="status">Ready to teach! Click to start</span>
+                </div>
+                <div class="voice-buttons">
+                    <button id="startButton" class="voice-btn start">
+                        <i class="fas fa-microphone"></i>
+                        <span>Ask Your Question</span>
+                    </button>
+                    <button id="stopButton" class="voice-btn stop" disabled>
+                        <i class="fas fa-stop"></i>
+                        <span>End Answer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Content Area -->
+        <div class="learning-content">
+            <div class="conversation-box">
+                <div class="conversation-header">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Learning Session</span>
+                </div>
+                <div id="conversation" class="conversation-area">
+                    <div class="message tutor-message welcome">
+                        <div class="message-header">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Professor AI</span>
+                        </div>
+                        <div class="message-content">
+                            Welcome to your personalized learning session! I'm here to help you understand any topic. 
+                            Feel free to ask questions about:
+                            <ul class="topic-suggestions">
+                                <li>Subject explanations</li>
+                                <li>Problem-solving help</li>
+                                <li>Concept clarifications</li>
+                                <li>Study techniques</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Materials Section -->
+            <div class="study-materials">
+                <div class="materials-header">
+                    <i class="fas fa-books"></i>
+                    <h3>Study Materials</h3>
+                </div>
+                <div class="upload-section">
+                    <p class="upload-info">Upload your study materials for personalized assistance</p>
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="file-upload">
+                            <input type="file" id="docUpload" accept=".pdf,.doc,.docx,.txt">
+                            <label for="docUpload">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span class="upload-text">Share Your Study Material</span>
+                                <span class="upload-hint">PDF, Word, or Text files</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="upload-btn">
+                            <i class="fas fa-upload"></i> Analyze Material
+                        </button>
+                    </form>
+                </div>
+            </div>
+    </div>
+    </div>
+    </div>
+
+<style>
+    .voice-interface {
+        min-height: 100vh;
+        padding: 20px;
+        background-color: #f8f9fa;
+    }
+
+    .main-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Tutor Section */
+    .tutor-section {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .tutor-avatar {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .tutor-avatar img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Upload Section */
+    .upload-section {
+        padding: 20px 0;
+    }
+
+    .upload-section h3 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .file-upload {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .file-upload input {
+        display: none;
+    }
+
+    .file-upload label {
+        display: block;
+        padding: 10px;
+        background: #e9ecef;
+        border: 2px dashed #adb5bd;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .file-upload label:hover {
+        background: #dee2e6;
+    }
+
+    .upload-btn {
+        width: 100%;
+        padding: 10px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .upload-btn:hover {
+        background: #45a049;
+    }
+
+    /* Voice Controls */
+    .voice-controls {
+        display: flex;
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .control-button {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .start-button {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .stop-button {
+        background: #dc3545;
+        color: white;
+    }
+
+    .stop-button:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+
+    /* Conversation Area */
+    .conversation-area {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        height: 400px;
+        overflow-y: auto;
+    }
+
+    .message {
+        padding: 1rem;
+        margin: 0.5rem 1rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .user-message {
+        background: #e8f5e9;
+        margin-left: 20%;
+        border-left: 4px solid #4CAF50;
+    }
+
+    .bot-message {
+        background: #f5f5f5;
+        margin-right: 20%;
+        border-left: 4px solid #2196F3;
+    }
+
+    /* Animated Teacher Avatar Styles */
+    .teacher-avatar {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .avatar-container {
+        position: relative;
+        width: 200px;
+        margin: 0 auto;
+    }
+
+    .avatar-circle {
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        border-radius: 50%;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .avatar-face {
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 120px;
+    }
+
+    .avatar-eyes {
+        display: flex;
+        justify-content: space-between;
+        width: 80px;
+        margin: 0 auto;
+        padding-top: 20px;
+    }
+
+    .eye {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .eye::after {
+        content: '';
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #333;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: blink 4s infinite;
+    }
+
+    .avatar-mouth {
+        width: 40px;
+        height: 20px;
+        background: white;
+        border-radius: 0 0 20px 20px;
+        margin: 20px auto 0;
+        position: relative;
+        overflow: hidden;
+        animation: talk 1s infinite;
+    }
+
+    .avatar-body {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: #2E7D32;
+    }
+
+    .tie {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 60px;
+        background: #d32f2f;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
+
+    .status-indicator {
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: #4CAF50;
+        font-weight: 500;
+    }
+
+    /* Animations */
+    @keyframes blink {
+        0%, 96%, 100% { transform: translate(-50%, -50%) scale(1); }
+        98% { transform: translate(-50%, -50%) scale(0.1); }
+    }
+
+    @keyframes talk {
+        0% { 
+            height: 15px;
+            border-radius: 0 0 20px 20px;
+        }
+        50% { 
+            height: 8px;
+            border-radius: 0 0 10px 10px;
+        }
+        100% { 
+            height: 15px;
+            border-radius: 0 0 20px 20px;
+        }
+    }
+
+    /* Speaking Animation */
+    .speaking .avatar-mouth {
+        animation: talk 0.3s infinite;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+        background: #333; /* Darker color for better visibility */
+        margin-top: 25px;
+    }
+
+    .speaking .avatar-circle {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    /* Teacher Introduction */
+    .teacher-intro {
+        margin-top: 1.5rem;
+        text-align: left;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .teacher-intro h3 {
+        color: #2E7D32;
+        margin-bottom: 0.5rem;
+    }
+
+    .interaction-tips {
+        list-style: none;
+        padding: 0;
+        margin-top: 1rem;
+    }
+
+    .interaction-tips li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: #666;
+    }
+
+    .interaction-tips i {
+        color: #4CAF50;
+    }
+
+    /* Upload Section Enhancements */
+    .upload-info {
+        color: #666;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .upload-text {
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .upload-hint {
+        display: block;
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    /* Quick Tips */
+    .quick-tips {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: #e8f5e9;
+        border-radius: 10px;
+    }
+
+    .quick-tips h4 {
+        color: #2E7D32;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .quick-tips ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .quick-tips li {
+        margin-bottom: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .quick-tips li::before {
+        content: '•';
+        color: #4CAF50;
+        position: absolute;
+        left: 0.5rem;
+    }
+
+    /* Voice Content Enhancements */
+    .voice-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .voice-header h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .interaction-guide {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .conversation-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px 10px 0 0;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .welcome-message {
+        background: #e8f5e9;
+        color: #2E7D32;
+        font-weight: 500;
+    }
+
+    .interactive-container {
+        display: grid;
+        grid-template-columns: 400px 1fr;
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .talking-tutor {
+        position: sticky;
+        top: 2rem;
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        text-align: center;
+        height: fit-content;
+    }
+
+    .tutor-animation {
+        margin-bottom: 2rem;
+    }
+
+    .voice-interaction {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .voice-status {
+        background: rgba(76, 175, 80, 0.1);
+        padding: 8px 16px;
+        border-radius: 20px;
+        margin-bottom: 1rem;
+    }
+
+    .voice-status span {
+        color: #2E7D32;
+        font-weight: 500;
+    }
+
+    .voice-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .voice-btn {
+        padding: 1rem;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .voice-btn.start {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .voice-btn.stop {
+        background: #dc3545;
+        color: white;
+    }
+
+    .learning-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .conversation-box {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .message {
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin: 1rem;
+    }
+
+    .message-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        color: #2E7D32;
+        font-weight: 500;
+    }
+
+    .topic-suggestions {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+
+    .topic-suggestions li {
+        margin: 0.5rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .topic-suggestions li::before {
+        content: '→';
+        position: absolute;
+        left: 0;
+        color: #4CAF50;
+    }
+
+    .tutor-message.welcome {
+        background: #f0f9ff;
+        border-left: 4px solid #4CAF50;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .interactive-container {
+            grid-template-columns: 1fr;
+        }
+
+        .talking-tutor {
+            position: relative;
+            top: 0;
+        }
+    }
+
+    /* Update the speaking animation styles */
+    .speaking .avatar-mouth {
+        animation: talk 0.3s infinite;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+        background: #333; /* Darker color for better visibility */
+        margin-top: 25px;
+    }
+
+    @keyframes talk {
+        0% { 
+            height: 15px;
+            border-radius: 0 0 20px 20px;
+        }
+        50% { 
+            height: 8px;
+            border-radius: 0 0 10px 10px;
+        }
+        100% { 
+            height: 15px;
+            border-radius: 0 0 20px 20px;
+        }
+    }
+
+    /* Remove asterisk animation and update status styles */
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        background: #4CAF50;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .voice-status {
+        background: rgba(76, 175, 80, 0.1);
+        padding: 8px 16px;
+        border-radius: 20px;
+        margin-bottom: 1rem;
+    }
+
+    .voice-status span {
+        color: #2E7D32;
+        font-weight: 500;
+    }
+
+    /* Update message styles for cleaner look */
+    .message {
+        padding: 1rem;
+        margin: 0.5rem 1rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .user-message {
+        background: #e8f5e9;
+        margin-left: 20%;
+        border-left: 4px solid #4CAF50;
+    }
+
+    .bot-message {
+        background: #f5f5f5;
+        margin-right: 20%;
+        border-left: 4px solid #2196F3;
+    }
+</style>
+
+<script>
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const statusText = document.getElementById('status');
+    const conversation = document.getElementById('conversation');
+    const uploadForm = document.getElementById('uploadForm');
+    const avatarContainer = document.querySelector('.avatar-container');
+
+    let isRecording = false;
+
+    function addMessage(text, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+        
+        // Create message content
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.textContent = text;
+        messageDiv.appendChild(contentDiv);
+        
+        conversation.appendChild(messageDiv);
+        conversation.scrollTop = conversation.scrollHeight;
+
+        // Animate teacher when responding
+        if (!isUser) {
+            avatarContainer.classList.add('speaking');
+            setTimeout(() => {
+                avatarContainer.classList.remove('speaking');
+            }, Math.min(text.length * 50, 3000)); // Cap animation at 3 seconds
+        }
+    }
+
+    // Update status text function
+    function updateStatus(text) {
+        statusText.textContent = text;
+    }
+
+    startButton.addEventListener('click', function() {
+        if (!isRecording) {
+            isRecording = true;
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            updateStatus('Listening to your question...');
+            avatarContainer.classList.add('speaking');
+            
+            fetch('/voice', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.user_message) {
+                    addMessage(data.user_message, true);
+                }
+                if (data.bot_response) {
+                    addMessage(data.bot_response, false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                addMessage("Sorry, there was an error processing your request.", false);
+            })
+            .finally(() => {
+                isRecording = false;
+                startButton.disabled = false;
+                stopButton.disabled = true;
+                updateStatus('Ready to help! Click to ask another question');
+                avatarContainer.classList.remove('speaking');
+            });
+        }
+    });
+
+    stopButton.addEventListener('click', function() {
+        if (isRecording) {
+            // Send stop signal to backend
+            fetch('/stop_voice', {
+                method: 'POST'
+            });
+            isRecording = false;
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            statusText.textContent = 'Recording stopped';
+            avatarContainer.classList.remove('speaking');
+        }
+    });
+
+    uploadForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData();
+        const fileInput = document.getElementById('docUpload');
+        formData.append('file', fileInput.files[0]);
+
+        fetch('/upload_document', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                addMessage("Document uploaded successfully!", false);
+            } else {
+                addMessage("Error uploading document: " + data.error, false);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            addMessage("Error uploading document", false);
+        });
+    });
+    </script>
+{% endblock %}

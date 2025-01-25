@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">Transform Your Learning Journey</h1>
+        <p class="hero-subtitle">Experience personalized education powered by advanced AI technology. Learn faster, understand better.</p>
+        <div class="mt-4">
+            <a href="/chat_2" class="btn btn-light btn-lg px-5 me-3">Try AI Tutor</a>
+            <a href="/signin" class="btn btn-outline-light btn-lg px-5">Sign In</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container mb-6">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Personalized Learning</h3>
+                <p class="text-muted">AI-powered tutoring that adapts to your learning style and pace. Get customized explanations and examples.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-microphone-alt"></i>
+                </div>
+                <h3>Voice Interaction</h3>
+                <p class="text-muted">Learn naturally through conversations. Ask questions and get instant, detailed explanations.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Track Progress</h3>
+                <p class="text-muted">Monitor your learning journey with detailed analytics and personalized recommendations.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="bg-white py-5 mb-6">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <h2 class="display-4 fw-bold text-primary">98%</h2>
+                <p class="text-muted">Student Satisfaction</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h2 class="display-4 fw-bold text-primary">50K+</h2>
+                <p class="text-muted">Active Learners</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h2 class="display-4 fw-bold text-primary">100+</h2>
+                <p class="text-muted">Subjects Covered</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h2 class="display-4 fw-bold text-primary">24/7</h2>
+                <p class="text-muted">Learning Support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="container mb-6">
+    <h2 class="text-center mb-5">What Our Students Say</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <span class="h5 mb-0">S</span>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="mb-0">Sarah Johnson</h5>
+                        <small class="text-muted">Computer Science Student</small>
+                    </div>
+                </div>
+                <p class="text-muted">"The AI tutor helped me understand complex programming concepts in ways traditional textbooks couldn't. It's like having a personal teacher 24/7!"</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <span class="h5 mb-0">M</span>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="mb-0">Michael Chen</h5>
+                        <small class="text-muted">Physics Major</small>
+                    </div>
+                </div>
+                <p class="text-muted">"The voice learning feature is amazing! I can ask questions while solving problems and get immediate, clear explanations."</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <span class="h5 mb-0">E</span>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="mb-0">Emma Davis</h5>
+                        <small class="text-muted">Medical Student</small>
+                    </div>
+                </div>
+                <p class="text-muted">"This platform has transformed how I study medicine. The AI breaks down complex topics and helps me retain information better."</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to Transform Your Learning?</h2>
+        <p class="lead mb-4">Join thousands of students who are learning smarter with AI.</p>
+        <a href="/signin" class="btn btn-light btn-lg px-5">Get Started Today</a>
+    </div>
+</section>
+{% endblock %}

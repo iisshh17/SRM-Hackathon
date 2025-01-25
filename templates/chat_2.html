@@ -1,0 +1,644 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="education-platform">
+    <!-- Sidebar for topics/history -->
+    <div class="study-sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-book-reader me-2"></i>Study Topics</h4>
+        </div>
+        <div class="topic-list">
+            {% for topic in ['Physics', 'Mathematics', 'Biology', 'Chemistry'] %}
+            <div class="topic-item {% if selected_topic == topic %}active{% endif %}" 
+                 data-topic="{{ topic|lower }}" onclick="selectTopic(this)">
+                <i class="fas fa-{{ topic_icons[topic|lower] }} me-2"></i>{{ topic }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="sidebar-header mt-4">
+            <h4><i class="fas fa-history me-2"></i>Recent Sessions</h4>
+        </div>
+        <div class="recent-sessions" id="recentSessions">
+            {% if recent_sessions %}
+                {% for session in recent_sessions %}
+                <div class="session-item" onclick="loadSession('{{ session.id }}')">
+                    <div class="session-title">{{ session.title }}</div>
+                    <div class="session-date">{{ session.date }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No recent sessions</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main chat area -->
+    <div class="main-study-area">
+        <div class="study-header">
+            <h2><i class="fas fa-robot me-2"></i>AI Learning Assistant</h2>
+            <div class="learning-tools">
+                <button class="tool-btn" title="Save Session" onclick="saveSession()">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+                <button class="tool-btn" title="Download Notes" onclick="downloadNotes()">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="tool-btn" title="Share" onclick="shareSession()">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="chat-interface">
+            <div class="chat-messages" id="chatBox">
+                {% if question and res %}
+                <div class="message-thread">
+                    <div class="user-query">
+                        <div class="avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="content">
+                            <div class="name">You asked:</div>
+                            <div class="text">{{ question }}</div>
+                        </div>
+                    </div>
+                    <div class="ai-response">
+                        <div class="avatar">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="content">
+                            <div class="name">Learning Guide</div>
+                            <div class="text formatted-response">
+                                {% for paragraph in res.split('\n') %}
+                                    {% if paragraph.strip() %}
+                                        <p>{{ paragraph }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <form method="POST" class="query-form">
+                <div class="learning-preferences">
+                    <div class="preference-item">
+                        <label>
+                            <i class="fas fa-brain me-2"></i>Learning Style
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="temperature" name="temperature" 
+                                   min="0" max="1" step="0.1" value="0.7">
+                            <div class="slider-labels">
+                                <span>Structured</span>
+                                <span id="temperatureValue">Balanced</span>
+                                <span>Exploratory</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <textarea class="query-input" id="question" name="question" 
+                              placeholder="What would you like to learn about? Try 'Explain quantum entanglement' or 'Help me understand derivatives'" required></textarea>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.education-platform {
+    display: flex;
+    height: calc(100vh - 60px);
+    background: #f8f9fa;
+}
+
+.study-sidebar {
+    width: 280px;
+    background: #fff;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    margin-bottom: 15px;
+}
+
+.topic-item {
+    padding: 10px 15px;
+    margin: 5px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.topic-item:hover, .topic-item.active {
+    background: #f0f7ff;
+    color: #0056b3;
+}
+
+.main-study-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.study-header {
+    padding: 20px;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.learning-tools {
+    display: flex;
+    gap: 10px;
+}
+
+.tool-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tool-btn:hover {
+    background: #f0f7ff;
+    color: #0056b3;
+}
+
+.chat-interface {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    max-height: calc(100vh - 300px); /* Limit maximum height */
+}
+
+.message-thread {
+    margin-bottom: 30px;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.user-query, .ai-response {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 12px;
+    background: #f8f9fa;
+}
+
+.user-query {
+    background: #f0f7ff;
+}
+
+.ai-response {
+    background: #f0fff4;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f0f7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-response .avatar {
+    background: #f0fff4;
+}
+
+.content {
+    flex: 1;
+    max-width: calc(100% - 60px); /* Account for avatar width */
+}
+
+.name {
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.text {
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 12px;
+    line-height: 1.6;
+    font-size: 1rem;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.formatted-response {
+    max-width: 100%;
+}
+
+.formatted-response p {
+    margin-bottom: 1rem;
+}
+
+.formatted-response p:last-child {
+    margin-bottom: 0;
+}
+
+/* Code block styling */
+.formatted-response pre {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.formatted-response code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+}
+
+/* List styling */
+.formatted-response ul, 
+.formatted-response ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.formatted-response li {
+    margin-bottom: 0.5rem;
+}
+
+/* Table styling */
+.formatted-response table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.formatted-response th,
+.formatted-response td {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.formatted-response th {
+    background: #f8f9fa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chat-messages {
+        padding: 10px;
+        max-height: calc(100vh - 250px);
+    }
+
+    .user-query, .ai-response {
+        padding: 5px;
+    }
+
+    .text {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+
+    .avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Scrollbar styling */
+.chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.query-form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.learning-preferences {
+    margin-bottom: 20px;
+}
+
+.preference-item {
+    margin-bottom: 15px;
+}
+
+.slider-container {
+    margin-top: 10px;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+}
+
+.query-input {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    resize: none;
+    height: 60px;
+}
+
+.submit-btn {
+    width: 60px;
+    background: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.submit-btn:hover {
+    background: #003d82;
+}
+
+.session-item {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.session-item:hover {
+    background: #f0f7ff;
+}
+
+.session-title {
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.session-date {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background: #333;
+    color: white;
+    border-radius: 8px;
+    display: none;
+    z-index: 1000;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<!-- Add this div for notifications -->
+<div id="toast" class="toast"></div>
+
+{% block extra_js %}
+<script>
+    const temperatureSlider = document.getElementById('temperature');
+    const temperatureValue = document.getElementById('temperatureValue');
+    
+    temperatureSlider.addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        if (value < 0.3) temperatureValue.textContent = "Structured";
+        else if (value > 0.7) temperatureValue.textContent = "Exploratory";
+        else temperatureValue.textContent = "Balanced";
+    });
+
+    // Auto-scroll to bottom of chat box
+    const chatBox = document.getElementById('chatBox');
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Prevent textarea from growing indefinitely
+    const queryInput = document.querySelector('.query-input');
+    queryInput.addEventListener('input', function() {
+        this.style.height = '60px';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+
+    // Topic selection
+    function selectTopic(element) {
+        document.querySelectorAll('.topic-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        element.classList.add('active');
+        
+        // Update placeholder based on selected topic
+        const topic = element.dataset.topic;
+        const placeholders = {
+            physics: "Try 'Explain quantum entanglement' or 'How do black holes work?'",
+            mathematics: "Try 'Explain derivatives' or 'Help with quadratic equations'",
+            biology: "Try 'How does DNA replication work?' or 'Explain photosynthesis'",
+            chemistry: "Try 'Explain chemical bonds' or 'How do catalysts work?'"
+        };
+        document.querySelector('.query-input').placeholder = placeholders[topic] || "What would you like to learn about?";
+    }
+
+    // Save session
+    function saveSession() {
+        const chatContent = document.getElementById('chatBox').innerHTML;
+        const sessionData = {
+            content: chatContent,
+            date: new Date().toISOString(),
+            topic: document.querySelector('.topic-item.active')?.dataset.topic
+        };
+
+        // Store in localStorage
+        const sessions = JSON.parse(localStorage.getItem('study_sessions') || '[]');
+        sessions.unshift(sessionData);
+        localStorage.setItem('study_sessions', JSON.stringify(sessions.slice(0, 10))); // Keep last 10 sessions
+
+        showToast('Session saved successfully!');
+        updateRecentSessions();
+    }
+
+    // Download notes
+    function downloadNotes() {
+        const chatContent = document.getElementById('chatBox').innerText;
+        const blob = new Blob([chatContent], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'study_notes.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        showToast('Notes downloaded successfully!');
+    }
+
+    // Share session
+    function shareSession() {
+        const shareData = {
+            title: 'Study Session',
+            text: 'Check out my study session!',
+            url: window.location.href
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData)
+                .then(() => showToast('Shared successfully!'))
+                .catch(() => showToast('Error sharing session'));
+        } else {
+            // Fallback: Copy URL to clipboard
+            navigator.clipboard.writeText(window.location.href)
+                .then(() => showToast('Link copied to clipboard!'))
+                .catch(() => showToast('Error copying link'));
+        }
+    }
+
+    // Load saved session
+    function loadSession(sessionId) {
+        const sessions = JSON.parse(localStorage.getItem('study_sessions') || '[]');
+        const session = sessions[sessionId];
+        if (session) {
+            document.getElementById('chatBox').innerHTML = session.content;
+            showToast('Session loaded successfully!');
+        }
+    }
+
+    // Update recent sessions list
+    function updateRecentSessions() {
+        const sessions = JSON.parse(localStorage.getItem('study_sessions') || '[]');
+        const recentSessionsDiv = document.getElementById('recentSessions');
+        
+        if (sessions.length === 0) {
+            recentSessionsDiv.innerHTML = '<p class="text-muted">No recent sessions</p>';
+            return;
+        }
+
+        recentSessionsDiv.innerHTML = sessions.map((session, index) => `
+            <div class="session-item" onclick="loadSession(${index})">
+                <div class="session-title">Study Session ${index + 1}</div>
+                <div class="session-date">${new Date(session.date).toLocaleDateString()}</div>
+            </div>
+        `).join('');
+    }
+
+    // Show toast notification
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+
+    // Function to format code blocks
+    function formatCodeBlocks() {
+        const responses = document.querySelectorAll('.formatted-response');
+        responses.forEach(response => {
+            // Find code blocks (text between triple backticks)
+            const text = response.innerHTML;
+            const formattedText = text.replace(/```([\s\S]*?)```/g, (match, code) => {
+                return `<pre><code>${code.trim()}</code></pre>`;
+            });
+            response.innerHTML = formattedText;
+        });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        updateRecentSessions();
+        
+        // Existing textarea height adjustment code...
+        const queryInput = document.querySelector('.query-input');
+        queryInput.addEventListener('input', function() {
+            this.style.height = '60px';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Existing temperature slider code...
+        const temperatureSlider = document.getElementById('temperature');
+        const temperatureValue = document.getElementById('temperatureValue');
+        
+        temperatureSlider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            if (value < 0.3) temperatureValue.textContent = "Structured";
+            else if (value > 0.7) temperatureValue.textContent = "Exploratory";
+            else temperatureValue.textContent = "Balanced";
+        });
+
+        // Auto-scroll to bottom of chat box
+        const chatBox = document.getElementById('chatBox');
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Format code blocks
+        formatCodeBlocks();
+        
+        // Scroll to bottom of chat
+        const chatBox = document.getElementById('chatBox');
+        chatBox.scrollTop = chatBox.scrollHeight;
+        
+        // Add smooth scrolling for new messages
+        const observer = new MutationObserver(() => {
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
+        
+        observer.observe(chatBox, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

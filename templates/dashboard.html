@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="welcome-title">Welcome to EduGenius AI</h1>
+                    <p class="welcome-subtitle">Your Personalized Learning Journey Starts Here</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">24/7</div>
+                            <div class="stat-label">AI Support</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">100+</div>
+                            <div class="stat-label">Topics</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Learning Modes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Features Section -->
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- AI Tutor Card -->
+            <div class="col-md-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Tutor</h3>
+                    <p>Get personalized explanations and answers</p>
+                    <a href="/chat_2" class="btn btn-primary">Start Learning</a>
+                </div>
+            </div>
+
+            <!-- Voice Learning Card -->
+            <div class="col-md-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <h3>Voice Learning</h3>
+                    <p>Interactive voice-based learning</p>
+                    <a href="/voice" class="btn btn-primary">Try Voice Mode</a>
+                </div>
+            </div>
+
+            <!-- Art Therapy Card -->
+            <div class="col-md-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3>Art Therapy</h3>
+                    <p>Express yourself through creative coloring</p>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="artTherapyDropdown" data-bs-toggle="dropdown">
+                            Start Creating
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('art_ironman') }}">
+                                <i class="fas fa-mask"></i> Ironman
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('art_shapes') }}">
+                                <i class="fas fa-shapes"></i> Shapes
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('art_flowers') }}">
+                                <i class="fas fa-flower"></i> Flowers
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('art_heroes') }}">
+                                <i class="fas fa-mask"></i> Heroes
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brain Games Card -->
+            <div class="col-md-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Brain Games</h3>
+                    <p>Enhance cognitive skills through games</p>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="gamesDropdown" data-bs-toggle="dropdown">
+                            Play Games
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/games/sudoku">Sudoku</a></li>
+                            <li><a class="dropdown-item" href="/games/memory">Memory Game</a></li>
+                            <li><a class="dropdown-item" href="/games/word-scramble">Word Scramble</a></li>
+                            <li><a class="dropdown-item" href="/games/math-quiz">Math Quiz</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="container py-5">
+        <h2 class="section-title">Recent Activity</h2>
+        <div class="activity-timeline">
+            <div class="timeline-item">
+                <div class="timeline-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="timeline-content">
+                    <h4>Started Learning Journey</h4>
+                    <p>Welcome to your personalized learning experience!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashboard-container {
+        background: var(--background-light);
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .welcome-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+    }
+
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .dropdown-item:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .dropdown-item i {
+        width: 20px;
+        text-align: center;
+        color: var(--primary-color);
+    }
+
+    .dropdown-item:hover i {
+        color: white;
+    }
+
+    .activity-timeline {
+        position: relative;
+        padding: 2rem 0;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .timeline-content {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        flex-grow: 1;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .welcome-section {
+            padding: 2rem 0;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+        }
+
+        .feature-card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}

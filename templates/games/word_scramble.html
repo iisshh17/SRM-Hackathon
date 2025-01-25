@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <h1><i class="fas fa-font me-2"></i>Word Scramble</h1>
+        <p class="lead">Unscramble the words to improve your vocabulary</p>
+    </div>
+    
+    <div class="game-controls">
+        <button onclick="newWord()" class="btn btn-primary">
+            <i class="fas fa-sync-alt me-2"></i>New Word
+        </button>
+        <div class="game-stats">
+            <span class="score">Score: <span id="score">0</span></span>
+            <span class="timer">Time: <span id="timeLeft">60</span>s</span>
+        </div>
+    </div>
+
+    <div class="word-container">
+        <div id="scrambledWord" class="scrambled-word"></div>
+        <input type="text" id="userGuess" class="word-input" placeholder="Type your answer here" autocomplete="off">
+        <button onclick="checkWord()" class="btn btn-success check-btn">
+            <i class="fas fa-check me-2"></i>Check
+        </button>
+    </div>
+
+    <div id="message" class="game-message"></div>
+    <div id="hint" class="hint-text"></div>
+</div>
+
+<style>
+.game-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.game-stats {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.2rem;
+}
+
+.word-container {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.scrambled-word {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #4a90e2;
+    margin-bottom: 1.5rem;
+    letter-spacing: 5px;
+}
+
+.word-input {
+    padding: 1rem;
+    font-size: 1.2rem;
+    border: 2px solid #4a90e2;
+    border-radius: 8px;
+    width: 300px;
+    margin-right: 1rem;
+    text-align: center;
+}
+
+.check-btn {
+    padding: 1rem 2rem;
+}
+
+.game-message {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: bold;
+    min-height: 24px;
+}
+
+.hint-text {
+    text-align: center;
+    color: #666;
+    margin-top: 1rem;
+    font-style: italic;
+}
+
+.success { color: #28a745; }
+.error { color: #dc3545; }
+
+@media (max-width: 600px) {
+    .word-input {
+        width: 200px;
+        font-size: 1rem;
+    }
+    
+    .scrambled-word {
+        font-size: 2rem;
+    }
+    
+    .game-controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+
+<script>
+const words = [
+    { word: 'PYTHON', hint: 'A popular programming language' },
+    { word: 'JAVASCRIPT', hint: 'A web programming language' },
+    { word: 'DATABASE', hint: 'Stores structured information' },
+    { word: 'ALGORITHM', hint: 'Step-by-step problem solving procedure' },
+    { word: 'VARIABLE', hint: 'Stores data in programming' },
+    { word: 'FUNCTION', hint: 'Reusable block of code' },
+    { word: 'INTERFACE', hint: 'Connection between systems' },
+    { word: 'NETWORK', hint: 'Connected computers' },
+    { word: 'SECURITY', hint: 'Protection from threats' },
+    { word: 'BROWSER', hint: 'Software for viewing websites' }
+];
+
+let currentWord = '';
+let score = 0;
+let timeLeft = 60;
+let timer = null;
+
+function scrambleWord(word) {
+    return word.split('').sort(() => Math.random() - 0.5).join('');
+}
+
+function newWord() {
+    const wordObj = words[Math.floor(Math.random() * words.length)];
+    currentWord = wordObj.word;
+    document.getElementById('scrambledWord').textContent = scrambleWord(currentWord);
+    document.getElementById('hint').textContent = `Hint: ${wordObj.hint}`;
+    document.getElementById('userGuess').value = '';
+    document.getElementById('message').textContent = '';
+    
+    if (!timer) {
+        timer = setInterval(updateTimer, 1000);
+    }
+}
+
+function checkWord() {
+    const userGuess = document.getElementById('userGuess').value.toUpperCase();
+    const message = document.getElementById('message');
+    
+    if (userGuess === currentWord) {
+        score += 10;
+        document.getElementById('score').textContent = score;
+        message.textContent = 'Correct! +10 points';
+        message.className = 'game-message success';
+        setTimeout(newWord, 1000);
+    } else {
+        message.textContent = 'Try again!';
+        message.className = 'game-message error';
+    }
+}
+
+function updateTimer() {
+    timeLeft--;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        alert(`Game Over! Your score: ${score}`);
+        resetGame();
+    }
+}
+
+function resetGame() {
+    score = 0;
+    timeLeft = 60;
+    document.getElementById('score').textContent = score;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    timer = null;
+    newWord();
+}
+
+document.getElementById('userGuess').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        checkWord();
+    }
+});
+
+// Start game
+document.addEventListener('DOMContentLoaded', newWord);
+</script>
+{% endblock %} 

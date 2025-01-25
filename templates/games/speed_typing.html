@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <h1><i class="fas fa-keyboard me-2"></i>Speed Typing</h1>
+        <p class="lead">Improve your typing speed and accuracy</p>
+    </div>
+    
+    <div class="game-controls">
+        <button onclick="startNewGame()" class="btn btn-primary">
+            <i class="fas fa-sync-alt me-2"></i>New Game
+        </button>
+        <div class="game-stats">
+            <span class="wpm">WPM: <span id="wpm">0</span></span>
+            <span class="accuracy">Accuracy: <span id="accuracy">100</span>%</span>
+            <span class="timer">Time: <span id="timeLeft">60</span>s</span>
+        </div>
+    </div>
+
+    <div class="typing-area">
+        <div id="textToType" class="text-display"></div>
+        <textarea id="userInput" class="typing-input" placeholder="Start typing here..." disabled></textarea>
+    </div>
+
+    <div id="message" class="game-message"></div>
+    <div id="results" class="results-container"></div>
+</div>
+
+<style>
+.game-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.game-stats {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.2rem;
+}
+
+.typing-area {
+    margin: 2rem 0;
+}
+
+.text-display {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+}
+
+.typing-input {
+    width: 100%;
+    height: 150px;
+    padding: 1rem;
+    font-size: 1.1rem;
+    border: 2px solid #4a90e2;
+    border-radius: 8px;
+    resize: none;
+}
+
+.correct { color: #28a745; }
+.incorrect { color: #dc3545; }
+.current { background-color: #e9ecef; }
+
+.results-container {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 600px) {
+    .game-controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .game-stats {
+        font-size: 1rem;
+        gap: 1rem;
+    }
+}
+</style>
+
+<script>
+const texts = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Programming is the art of telling another human what one wants the computer to do.",
+    "In computing, garbage in, garbage out (GIGO) is the concept that flawed input data produces nonsense output.",
+    "The best way to predict the future is to invent it.",
+    "Software engineering is not just about writing code, it's about solving problems."
+];
+
+let currentText = '';
+let timeLeft = 60;
+let timer = null;
+let isGameActive = false;
+let startTime;
+let errors = 0;
+let totalChars = 0;
+
+function getRandomText() {
+    return texts[Math.floor(Math.random() * texts.length)];
+}
+
+function calculateWPM() {
+    const timeElapsed = (Date.now() - startTime) / 1000 / 60; // in minutes
+    const wordsTyped = totalChars / 5; // assume average word length of 5 characters
+    return Math.round(wordsTyped / timeElapsed);
+}
+
+function calculateAccuracy() {
+    return Math.round(((totalChars - errors) / totalChars) * 100) || 100;
+}
+
+function updateStats() {
+    if (isGameActive) {
+        document.getElementById('wpm').textContent = calculateWPM();
+        document.getElementById('accuracy').textContent = calculateAccuracy();
+    }
+}
+
+function checkText(e) {
+    if (!isGameActive) return;
+    
+    const userInput = e.target.value;
+    totalChars = userInput.length;
+    errors = 0;
+    
+    const textDisplay = document.getElementById('textToType');
+    textDisplay.innerHTML = currentText.split('').map((char, index) => {
+        if (index >= userInput.length) {
+            return char;
+        }
+        if (char === userInput[index]) {
+            return `<span class="correct">${char}</span>`;
+        } else {
+            errors++;
+            return `<span class="incorrect">${char}</span>`;
+        }
+    }).join('');
+    
+    updateStats();
+    
+    if (userInput === currentText) {
+        gameOver(true);
+    }
+}
+
+function updateTimer() {
+    timeLeft--;
+    document.getElementById('timeLeft').textContent = timeLeft;
+    
+    if (timeLeft <= 0) {
+        gameOver(false);
+    }
+}
+
+function gameOver(completed) {
+    isGameActive = false;
+    clearInterval(timer);
+    
+    const wpm = calculateWPM();
+    const accuracy = calculateAccuracy();
+    
+    const message = completed ? 
+        `Congratulations! You completed the text!` :
+        `Time's up!`;
+        
+    document.getElementById('results').innerHTML = `
+        ${message}<br>
+        Final WPM: ${wpm}<br>
+        Accuracy: ${accuracy}%
+    `;
+    
+    document.getElementById('userInput').disabled = true;
+}
+
+function startNewGame() {
+    currentText = getRandomText();
+    timeLeft = 60;
+    isGameActive = true;
+    startTime = Date.now();
+    errors = 0;
+    totalChars = 0;
+    
+    document.getElementById('textToType').textContent = currentText;
+    document.getElementById('userInput').value = '';
+    document.getElementById('userInput').disabled = false;
+    document.getElementById('userInput').focus();
+    document.getElementById('results').innerHTML = '';
+    document.getElementById('wpm').textContent = '0';
+    document.getElementById('accuracy').textContent = '100';
+    document.getElementById('timeLeft').textContent = timeLeft;
+    
+    if (timer) clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+}
+
+document.getElementById('userInput').addEventListener('input', checkText);
+</script>
+{% endblock %} 

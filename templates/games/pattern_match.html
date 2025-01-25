@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <h1><i class="fas fa-puzzle-piece me-2"></i>Pattern Matching</h1>
+        <p class="lead">Match the pattern sequence to improve visual memory</p>
+    </div>
+    
+    <div class="game-controls">
+        <button onclick="startNewGame()" class="btn btn-primary">
+            <i class="fas fa-sync-alt me-2"></i>New Game
+        </button>
+        <div class="game-stats">
+            <span class="level">Level: <span id="level">1</span></span>
+            <span class="score">Score: <span id="score">0</span></span>
+        </div>
+    </div>
+
+    <div class="pattern-grid" id="patternGrid"></div>
+    <div id="message" class="game-message"></div>
+</div>
+
+<style>
+.pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 400px;
+    margin: 2rem auto;
+}
+
+.pattern-cell {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pattern-cell.active {
+    background-color: #4a90e2 !important;
+}
+
+.pattern-cell.highlight {
+    animation: highlight 0.5s;
+}
+
+@keyframes highlight {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ... (include the common game container styles) ... */
+</style>
+
+<script>
+let currentPattern = [];
+let userPattern = [];
+let level = 1;
+let score = 0;
+let isShowingPattern = false;
+
+function createGrid() {
+    const grid = document.getElementById('patternGrid');
+    grid.innerHTML = '';
+    
+    for (let i = 0; i < 16; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'pattern-cell';
+        cell.style.backgroundColor = '#f0f0f0';
+        cell.dataset.index = i;
+        cell.onclick = () => cellClick(i);
+        grid.appendChild(cell);
+    }
+}
+
+function generatePattern() {
+    currentPattern = [];
+    for (let i = 0; i < level + 2; i++) {
+        currentPattern.push(Math.floor(Math.random() * 16));
+    }
+}
+
+async function showPattern() {
+    isShowingPattern = true;
+    for (const index of currentPattern) {
+        const cell = document.querySelector(`[data-index="${index}"]`);
+        cell.classList.add('active');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        cell.classList.remove('active');
+        await new Promise(resolve => setTimeout(resolve, 200));
+    }
+    isShowingPattern = false;
+}
+
+function cellClick(index) {
+    if (isShowingPattern) return;
+    
+    const cell = document.querySelector(`[data-index="${index}"]`);
+    cell.classList.add('highlight');
+    setTimeout(() => cell.classList.remove('highlight'), 500);
+    
+    userPattern.push(index);
+    checkPattern();
+}
+
+function checkPattern() {
+    const currentLength = userPattern.length;
+    const targetLength = currentPattern.length;
+    
+    if (userPattern[currentLength - 1] !== currentPattern[currentLength - 1]) {
+        gameOver();
+        return;
+    }
+    
+    if (currentLength === targetLength) {
+        score += level * 10;
+        level++;
+        document.getElementById('score').textContent = score;
+        document.getElementById('level').textContent = level;
+        document.getElementById('message').textContent = 'Correct! Next level...';
+        document.getElementById('message').className = 'game-message success';
+        setTimeout(() => {
+            userPattern = [];
+            startNewRound();
+        }, 1000);
+    }
+}
+
+function gameOver() {
+    alert(`Game Over!\nFinal Score: ${score}\nLevel Reached: ${level}`);
+    startNewGame();
+}
+
+function startNewRound() {
+    generatePattern();
+    document.getElementById('message').textContent = 'Watch the pattern...';
+    setTimeout(showPattern, 1000);
+}
+
+function startNewGame() {
+    level = 1;
+    score = 0;
+    userPattern = [];
+    document.getElementById('score').textContent = score;
+    document.getElementById('level').textContent = level;
+    document.getElementById('message').textContent = '';
+    createGrid();
+    startNewRound();
+}
+
+document.addEventListener('DOMContentLoaded', startNewGame);
+</script>
+{% endblock %} 

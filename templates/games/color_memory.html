@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <h1><i class="fas fa-palette me-2"></i>Color Memory</h1>
+        <p class="lead">Remember and repeat the color sequence</p>
+    </div>
+    
+    <div class="game-controls">
+        <button onclick="startNewGame()" class="btn btn-primary">
+            <i class="fas fa-sync-alt me-2"></i>New Game
+        </button>
+        <div class="game-stats">
+            <span class="level">Level: <span id="level">1</span></span>
+            <span class="score">Score: <span id="score">0</span></span>
+        </div>
+    </div>
+
+    <div class="color-grid" id="colorGrid">
+        <div class="color-cell" data-color="red"></div>
+        <div class="color-cell" data-color="blue"></div>
+        <div class="color-cell" data-color="green"></div>
+        <div class="color-cell" data-color="yellow"></div>
+    </div>
+
+    <div id="message" class="game-message"></div>
+</div>
+
+<style>
+.game-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 400px;
+    margin: 2rem auto;
+}
+
+.color-cell {
+    aspect-ratio: 1;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.color-cell[data-color="red"] { background-color: #ff4444; }
+.color-cell[data-color="blue"] { background-color: #4444ff; }
+.color-cell[data-color="green"] { background-color: #44ff44; }
+.color-cell[data-color="yellow"] { background-color: #ffff44; }
+
+.color-cell.active {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.game-message {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: bold;
+    min-height: 24px;
+}
+
+.success { color: #28a745; }
+.error { color: #dc3545; }
+</style>
+
+<script>
+let sequence = [];
+let playerSequence = [];
+let level = 1;
+let score = 0;
+let isPlaying = false;
+
+const colors = ['red', 'blue', 'green', 'yellow'];
+
+function flash(element) {
+    return new Promise(resolve => {
+        element.classList.add('active');
+        setTimeout(() => {
+            element.classList.remove('active');
+            setTimeout(resolve, 200);
+        }, 500);
+    });
+}
+
+async function playSequence() {
+    isPlaying = true;
+    for (const color of sequence) {
+        const cell = document.querySelector(`[data-color="${color}"]`);
+        await flash(cell);
+    }
+    isPlaying = false;
+}
+
+function addToSequence() {
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    sequence.push(randomColor);
+}
+
+function cellClick(color) {
+    if (isPlaying) return;
+    
+    const cell = document.querySelector(`[data-color="${color}"]`);
+    flash(cell);
+    
+    playerSequence.push(color);
+    checkSequence();
+}
+
+function checkSequence() {
+    const currentIndex = playerSequence.length - 1;
+    
+    if (playerSequence[currentIndex] !== sequence[currentIndex]) {
+        gameOver();
+        return;
+    }
+    
+    if (playerSequence.length === sequence.length) {
+        score += level * 10;
+        level++;
+        document.getElementById('score').textContent = score;
+        document.getElementById('level').textContent = level;
+        document.getElementById('message').textContent = 'Correct! Next sequence...';
+        document.getElementById('message').className = 'game-message success';
+        playerSequence = [];
+        setTimeout(nextRound, 1000);
+    }
+}
+
+function gameOver() {
+    alert(`Game Over!\nFinal Score: ${score}\nLevel Reached: ${level}`);
+    startNewGame();
+}
+
+function nextRound() {
+    addToSequence();
+    playSequence();
+}
+
+function startNewGame() {
+    sequence = [];
+    playerSequence = [];
+    level = 1;
+    score = 0;
+    document.getElementById('score').textContent = score;
+    document.getElementById('level').textContent = level;
+    document.getElementById('message').textContent = '';
+    addToSequence();
+    playSequence();
+}
+
+// Add click handlers to color cells
+document.querySelectorAll('.color-cell').forEach(cell => {
+    const color = cell.dataset.color;
+    cell.addEventListener('click', () => cellClick(color));
+});
+
+// Start game when page loads
+document.addEventListener('DOMContentLoaded', startNewGame);
+</script>
+{% endblock %} 

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Art Therapy</title>
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+
+    h1{
+      font-size: 2rem;
+    }
+
+    .art-section{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .art-container {
+      width: 300px;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .art {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 10px auto;
+    }
+
+    .palette {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .palette input {
+      cursor: pointer;
+    }
+
+    #close {
+      color: #fffafa;
+      background-color: #ff0000;
+      position: fixed;
+      right: 4vw;
+      top: 4vh;
+      font-size: 40px;
+      width: 3vw;
+    }
+
+    #close:hover {
+      box-shadow: 5px 5px 5px rgb(70, 69, 69);
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 id="artTherapy">Art Therapy</h1>
+  <p id="completeArt">Complete these artworks using the color palette</p>
+
+  <select id="languageSelect" onchange="changeLanguage(this.value)">
+      <option value="english">English</option>
+      <option value="hindi">Hindi</option>
+      <option value="marathi">Marathi</option>
+      <option value="tamil">Tamil</option>
+      <option value="bengali">Bengali</option>
+  </select>
+
+  <div class="art-section">
+    <div class="art-container">
+      <h2 id="image1Title">Image 1</h2>
+      <svg id="image1" class="art" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="40" fill="gray" id="circle1"></circle>
+      </svg>
+      <div class="palette">
+        <input type="color" onchange="colorPart('circle1', this.value)">
+        <label id="circleLabel">Circle</label>
+      </div>
+    </div>
+
+    <div class="art-container">
+      <h2 id="image2Title">Image 2</h2>
+      <svg id="image2" class="art" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="80" height="80" fill="gray" id="rect1"></rect>
+      </svg>
+      <div class="palette">
+        <input type="color" onchange="colorPart('rect1', this.value)">
+        <label id="rectangleLabel">Rectangle</label>
+      </div>
+    </div>
+
+    <div class="art-container">
+      <h2 id="image3Title">Image 3</h2>
+      <svg id="image3" class="art" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,10 90,90 10,90" fill="gray" id="polygon1"></polygon>
+      </svg>
+      <div class="palette">
+        <input type="color" onchange="colorPart('polygon1', this.value)">
+        <label id="triangleLabel">Triangle</label>
+      </div>
+    </div>
+
+    <div class="art-container">
+      <h2 id="image4Title">Image 4</h2>
+      <svg id="image4" class="art" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="50" rx="40" ry="20" fill="gray" id="ellipse1"></ellipse>
+      </svg>
+      <div class="palette">
+        <input type="color" onchange="colorPart('ellipse1', this.value)">
+        <label id="ellipseLabel">Ellipse</label>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="colorPaletteText">Color Palette</h2>
+  <div id="color-palette">
+    <input type="color" id="color-picker" />
+    <button onclick="applyColor()">Apply Color</button>
+  </div>
+
+  <button id="close">X</button>
+
+  <script>
+    function colorPart(id, color) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.setAttribute('fill', color);
+      }
+    }
+
+    const closeBtn = document.getElementById("close");
+    closeBtn.addEventListener("click", () => {
+      window.location.href = "/";
+    });
+
+    const translations = {
+      english: {
+        artTherapy: "Art Therapy",
+        completeArt: "Complete these artworks using the color palette",
+        image1Title: "Image 1",
+        image2Title: "Image 2",
+        image3Title: "Image 3",
+        image4Title: "Image 4",
+        circleLabel: "Circle",
+        rectangleLabel: "Rectangle",
+        triangleLabel: "Triangle",
+        ellipseLabel: "Ellipse",
+        colorPaletteText: "Color Palette"
+      },
+      hindi: {
+        artTherapy: "कला उपचार",
+        completeArt: "रंग पैलेट का उपयोग करके इन कलाकृतियों को पूरा करें",
+        image1Title: "चित्र 1",
+        image2Title: "चित्र 2",
+        image3Title: "चित्र 3",
+        image4Title: "चित्र 4",
+        circleLabel: "गोल",
+        rectangleLabel: "आयत",
+        triangleLabel: "त्रिकोण",
+        ellipseLabel: "अंडाकार",
+        colorPaletteText: "रंग पैलेट"
+      },
+      marathi: {
+        artTherapy: "कला उपचार",
+        completeArt: "रंग पॅलेटचा वापर करून या कलाकृती पूर्ण करा",
+        image1Title: "चित्र 1",
+        image2Title: "चित्र 2",
+        image3Title: "चित्र 3",
+        image4Title: "चित्र 4",
+        circleLabel: "गोल",
+        rectangleLabel: "आयत",
+        triangleLabel: "त्रिकोण",
+        ellipseLabel: "अंडाकार",
+        colorPaletteText: "रंग पॅलेट"
+      },
+      tamil: {
+        artTherapy: "கலை சிகிச்சை",
+        completeArt: "நிறக் களஞ்சியத்தைப் பயன்படுத்தி இந்த கலைக்கூறுகளை முடிக்கவும்",
+        image1Title: "படம் 1",
+        image2Title: "படம் 2",
+        image3Title: "படம் 3",
+        image4Title: "படம் 4",
+        circleLabel: "வட்டம்",
+        rectangleLabel: "சதுரம்",
+        triangleLabel: "முக்கோணம்",
+        ellipseLabel: "மூலக்கோணம்",
+        colorPaletteText: "நிறக் களஞ்சியம்"
+      },
+      bengali: {
+        artTherapy: "শিল্প থেরাপি",
+        completeArt: "রঙের প্যালেট ব্যবহার করে এই শিল্পকর্মগুলি সম্পূর্ণ করুন",
+        image1Title: "ছবি 1",
+        image2Title: "ছবি 2",
+        image3Title: "ছবি 3",
+        image4Title: "ছবি 4",
+        circleLabel: "বৃত্ত",
+        rectangleLabel: "আয়তন",
+        triangleLabel: "ত্রিভুজ",
+        ellipseLabel: "ডিম্বাকৃতি",
+        colorPaletteText: "রঙের প্যালেট"
+      }
+    };
+
+    function changeLanguage(language) {
+      document.getElementById("artTherapy").innerText = translations[language].artTherapy;
+      document.getElementById("completeArt").innerText = translations[language].completeArt;
+      document.getElementById("image1Title").innerText = translations[language].image1Title;
+      document.getElementById("image2Title").innerText = translations[language].image2Title;
+      document.getElementById("image3Title").innerText = translations[language].image3Title;
+      document.getElementById("image4Title").innerText = translations[language].image4Title;
+      document.getElementById("circleLabel").innerText = translations[language].circleLabel;
+      document.getElementById("rectangleLabel").innerText = translations[language].rectangleLabel;
+      document.getElementById("triangleLabel").innerText = translations[language].triangleLabel;
+      document.getElementById("ellipseLabel").innerText = translations[language].ellipseLabel;
+      document.getElementById("colorPaletteText").innerText = translations[language].colorPaletteText;
+    }
+  </script>
+</body>
+</html>
